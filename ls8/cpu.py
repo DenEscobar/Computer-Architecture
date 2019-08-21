@@ -7,6 +7,7 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
+        registers = [0] * 8
         pass
 
     def load(self):
