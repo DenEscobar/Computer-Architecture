@@ -7,7 +7,9 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
+        memory = [0] *256
         registers = [0] * 8
+        pc = 0
         pass
 
     def load(self):
@@ -31,6 +33,11 @@ class CPU:
             self.ram[address] = instruction
             address += 1
 
+    def ram_read(address):
+        return self.ram[address]
+
+    def ram_write(value, address):
+        self.ram[address] = value
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
