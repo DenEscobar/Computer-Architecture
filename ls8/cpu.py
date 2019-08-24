@@ -1,6 +1,7 @@
 """CPU functionality."""
 
 import sys
+print(sys.argv[-1])
 
 class CPU:
     """Main CPU class."""
@@ -11,26 +12,35 @@ class CPU:
         self.reg = [0] * 8
         self.pc = 0
 
-    def load(self):
+    def load(self, file):
         """Load a program into memory."""
 
         address = 0
 
         # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
+        program = []
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        f = open(file, "r")
+        fcont = f.readlines()
+        for x in fcont:
+            if x != "":
+                program.append(x)
+        print(program)
+
+
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
 
     def ram_read(self, address):
         return self.ram[address]
