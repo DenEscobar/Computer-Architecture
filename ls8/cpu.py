@@ -1,7 +1,6 @@
 """CPU functionality."""
 
 import sys
-print(sys.argv[-1])
 
 class CPU:
     """Main CPU class."""
@@ -34,13 +33,13 @@ class CPU:
         fcont = f.readlines()
         for x in fcont:
             if x != "":
-                program.append(x)
-        print(program)
+                program.append('0b' + x[:8])
+        #print(program)
 
 
-        # for instruction in program:
-        #     self.ram[address] = instruction
-        #     address += 1
+        for instruction in program:
+            self.ram[address] = instruction
+            address += 1
 
     def ram_read(self, address):
         return self.ram[address]
