@@ -32,9 +32,9 @@ class CPU:
         f = open(file, "r")
         fcont = f.readlines()
         for x in fcont:
-            if x != "":
-                program.append('0b' + x[:8])
-        #print(program)
+            if x != "\n" and x[0] != "#":
+                program.append(int(x[:8], 2))
+        print(program)
 
 
         for instruction in program:
@@ -80,18 +80,20 @@ class CPU:
         """Run the CPU."""
 
         ir = self.pc 
-        operand_a = self.ram_read(ir + 1)
-        operand_b = self.ram_read(ir + 2)
         running = True
 
         while running:
-
+            operand_a = self.ram_read(ir + 1)
+            operand_b = self.ram_read(ir + 2)
             if self.ram_read(ir) == 0b10000010: #LDI
                 self.reg[operand_a] = int(operand_b)
                 ir += 3
             elif self.ram_read(ir) == 0b01000111: #PRN
                 print(self.reg[operand_a])
                 ir += 2
+            elif self.ram_read(ir) == 0b10100010: #PRN
+                self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
+                ir += 3
             elif self.ram_read(ir) == 0b00000001: #HLT
                 running = False
         
