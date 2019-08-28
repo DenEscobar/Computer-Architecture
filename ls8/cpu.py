@@ -2,6 +2,14 @@
 
 import sys
 
+LDI = 0b10000010
+HLT = 0b00000001
+PRN = 0b01000111
+MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
+
+
 class CPU:
     """Main CPU class."""
 
@@ -10,6 +18,7 @@ class CPU:
         self.ram = [0] *256
         self.reg = [0] * 8
         self.pc = 0
+        self.reg[7] = 255
 
     def load(self, file):
         """Load a program into memory."""
@@ -34,7 +43,7 @@ class CPU:
         for x in fcont:
             if x != "\n" and x[0] != "#":
                 program.append(int(x[:8], 2))
-        print(program)
+        #print(program)
 
 
         for instruction in program:
@@ -83,17 +92,30 @@ class CPU:
         running = True
 
         while running:
+            
+            command = self.ram_read(ir)
             operand_a = self.ram_read(ir + 1)
             operand_b = self.ram_read(ir + 2)
-            if self.ram_read(ir) == 0b10000010: #LDI
+            if command == LDI: 
                 self.reg[operand_a] = int(operand_b)
                 ir += 3
-            elif self.ram_read(ir) == 0b01000111: #PRN
+            elif command == PRN: 
                 print(self.reg[operand_a])
                 ir += 2
-            elif self.ram_read(ir) == 0b10100010: #PRN
+            elif command == MUL: 
                 self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
                 ir += 3
-            elif self.ram_read(ir) == 0b00000001: #HLT
+            elif command == PUSH:
+                sp = (self.reg[7]-1 )% 255
+                self.reg[7] = (sp) % 255
+                self.ram_write(self.reg[operand_a], sp) 
+                ir += 2
+            elif command == POP:
+                sp = self.reg[7]
+                value = self.ram_read(sp)
+                self.reg[operand_a] = value
+                self.reg[7] = (sp + 1) % 255
+                ir +=2
+            elif command == HLT: 
                 running = False
         
