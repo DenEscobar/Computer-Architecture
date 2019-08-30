@@ -8,6 +8,9 @@ PRN = 0b01000111
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
+CALL = 0b01010000
+RET = 0b00010001
+ADD = 0b10100000
 
 
 class CPU:
@@ -43,7 +46,7 @@ class CPU:
         for x in fcont:
             if x != "\n" and x[0] != "#":
                 program.append(int(x[:8], 2))
-        #print(program)
+        print(program)
 
 
         for instruction in program:
@@ -92,7 +95,6 @@ class CPU:
         running = True
 
         while running:
-            
             command = self.ram_read(ir)
             operand_a = self.ram_read(ir + 1)
             operand_b = self.ram_read(ir + 2)
@@ -105,6 +107,10 @@ class CPU:
             elif command == MUL: 
                 self.reg[operand_a]= self.reg[operand_a] * self.reg[operand_b]
                 ir += 3
+            elif command == ADD:
+                self.reg[operand_a] = self.reg[operand_a] + self.reg[operand_b]
+
+                ir += 3
             elif command == PUSH:
                 sp = (self.reg[7]-1 )% 255
                 self.reg[7] = (sp) % 255
@@ -116,6 +122,23 @@ class CPU:
                 self.reg[operand_a] = value
                 self.reg[7] = (sp + 1) % 255
                 ir +=2
+            elif command == CALL:
+                regAdd = self.ram_read(operand_a)
+                addJump = self.reg[regAdd]
+                
+                next_command = ir + 2
+                sp = (self.reg[7]-1 )% 255
+                
+                self.reg[7] = (sp) % 255
+                self.ram_write(int(next_command), sp) 
+
+                ir = addJump
+            elif command == RET:
+                sp = self.reg[7]
+                return_address = self.ram_read(sp)
+                self.reg[7] = (sp + 1) % 255
+
+                ir = return_address
             elif command == HLT: 
                 running = False
         
